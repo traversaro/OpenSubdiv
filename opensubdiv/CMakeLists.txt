@@ -148,7 +148,7 @@ if (NOT NO_LIB)
         ${PLATFORM_CPU_LIBRARIES}
     )
 
-    install( TARGETS osd_static_cpu EXPORT opensubdiv-targets DESTINATION "${CMAKE_LIBDIR_BASE}" )
+    #install( TARGETS osd_static_cpu EXPORT opensubdiv-targets DESTINATION "${CMAKE_LIBDIR_BASE}" )
 
     if( OSD_GPU )
         # this macro uses FindCUDA.cmake to compile .cu kernel files
@@ -175,7 +175,7 @@ if (NOT NO_LIB)
             ${PLATFORM_CPU_LIBRARIES} ${PLATFORM_GPU_LIBRARIES}
         )
 
-        install( TARGETS osd_static_gpu EXPORT opensubdiv-targets DESTINATION "${CMAKE_LIBDIR_BASE}" )
+        #install( TARGETS osd_static_gpu EXPORT opensubdiv-targets DESTINATION "${CMAKE_LIBDIR_BASE}" )
     endif()
 
 

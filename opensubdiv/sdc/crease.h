@@ -64,8 +64,8 @@ public:
     //@{
     ///  Constants and related queries of sharpness values:
     ///
-    static float const SHARPNESS_SMOOTH;    // =  0.0f, do we really need this?
-    static float const SHARPNESS_INFINITE;  // = 10.0f;
+    OPENSUBDIR_EXPORT static float const SHARPNESS_SMOOTH;    // =  0.0f, do we really need this?
+    OPENSUBDIR_EXPORT static float const SHARPNESS_INFINITE;  // = 10.0f;
 
     static bool IsSmooth(float sharpness)    { return sharpness <= SHARPNESS_SMOOTH; }
     static bool IsSharp(float sharpness)     { return sharpness > SHARPNESS_SMOOTH; }

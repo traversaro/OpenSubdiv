@@ -178,9 +178,11 @@ if (NOT NO_LIB)
         install( TARGETS osd_static_gpu EXPORT opensubdiv-targets DESTINATION "${CMAKE_LIBDIR_BASE}" )
     endif()
 
-
     # Build dynamic libs  ----------------------------------
-    if (BUILD_SHARED_LIBS AND NOT WIN32 AND NOT IOS)
+    if (BUILD_SHARED_LIBS AND WIN32)
+        set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+    endif ()
+    if (BUILD_SHARED_LIBS AND NOT IOS)
 
         # generate dynamic-link targets
 
@@ -216,10 +218,25 @@ if (NOT NO_LIB)
             INTERFACE
                 $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         )
-
         target_link_libraries(osd_dynamic_cpu
             ${PLATFORM_CPU_LIBRARIES}
         )
+
+        if (WIN32)
+            target_compile_definitions(osd_dynamic_cpu INTERFACE OPENSUBDIR_CONSUMED_AS_SHARED)
+            # Workaround for https://gitlab.kitware.com/cmake/cmake/-/issues/26356
+            file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/static_attributes_exports.def
+"EXPORTS
+    ?SHARPNESS_SMOOTH@Crease@Sdc@${OpenSubdiv_VERSION}@OpenSubdiv@@2MB 	 DATA
+    ?SHARPNESS_INFINITE@Crease@Sdc@${OpenSubdiv_VERSION}@OpenSubdiv@@2MB 	 DATA
+")
+            target_sources(osd_dynamic_cpu PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/static_attributes_exports.def)
+
+            set_target_properties(osd_dynamic_cpu
+                PROPERTIES
+                    ARCHIVE_OUTPUT_NAME osdCPU_import
+                )
+        endif()
 
         install( TARGETS osd_dynamic_cpu EXPORT opensubdiv-targets LIBRARY DESTINATION "${CMAKE_LIBDIR_BASE}" )
 
@@ -250,6 +267,13 @@ if (NOT NO_LIB)
                     )
             endif()
 
+            if(WIN32)
+                set_target_properties(osd_dynamic_gpu
+                    PROPERTIES
+                        ARCHIVE_OUTPUT_NAME osdGPU_import
+                    )
+            endif()
+
             target_include_directories(osd_dynamic_gpu
                 INTERFACE
                     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
@@ -259,6 +283,10 @@ if (NOT NO_LIB)
                 osd_dynamic_cpu
                 ${PLATFORM_CPU_LIBRARIES} ${PLATFORM_GPU_LIBRARIES}
             )
+
+            if (WIN32)
+                target_compile_definitions(osd_dynamic_gpu PUBLIC OPENSUBDIR_SHARED)
+            endif()
 
             install( TARGETS osd_dynamic_gpu EXPORT opensubdiv-targets LIBRARY DESTINATION "${CMAKE_LIBDIR_BASE}" )
         endif()

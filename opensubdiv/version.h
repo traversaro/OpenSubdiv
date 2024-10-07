@@ -42,4 +42,10 @@ using namespace OPENSUBDIV_VERSION;
 
 } // end namespace OpenSubdiv
 
+#if defined(_WIN32) && defined(OPENSUBDIR_CONSUMED_AS_SHARED)
+#define OPENSUBDIR_EXPORT __declspec(dllimport)
+#else
+#define OPENSUBDIR_EXPORT
+#endif /* defined(_WIN32) */
+
 #endif /* OPENSUBDIV3_VERSION_H */
